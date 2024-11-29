@@ -56,23 +56,41 @@ class Particle:
         else:
             raise Exception("Particle is dead!")
 
-    def reproduce(self, dtime: float):
-        if self.alive:
+    def reproduce(
+        self,
+        dtime: float,
+        custom_parameters: dict = {}
+    ):
+        if self.alive and self.fertility > 0.0:
             if np.random.binomial(1, self.fertility * dtime):
+                if "location" not in custom_parameters.keys():
+                    custom_parameters["location"] = self.location
+                if "velocity" not in custom_parameters.keys():
+                    custom_parameters["velocity"] = self.velocity
+                if "acceleration" not in custom_parameters.keys():
+                    custom_parameters["acceleration"] = self.acceleration
+                if "diffusion_parameter" not in custom_parameters.keys():
+                    custom_parameters["diffusion_parameter"] = self.diffusion_parameter
+                if "diffusion_quantity" not in custom_parameters.keys():
+                    custom_parameters["diffusion_quantity"] = self.diffusion_quantity
+                if "weight" not in custom_parameters.keys():
+                    custom_parameters["weight"] = self.weight
+                if "fertility" not in custom_parameters.keys():
+                    custom_parameters["fertility"] = self.fertility
+                if "mortality" not in custom_parameters.keys():
+                    custom_parameters["mortality"] = self.mortality
                 return Particle(
-                    location=self.location,
-                    velocity = self.velocity,
-                    acceleration = self.acceleration,
-                    diffusion_parameter = self.diffusion_parameter,
-                    diffusion_quantity = self.diffusion_quantity,
-                    weight = self.weight,
-                    fertility = self.fertility,
-                    mortality = self.mortality
+                    location=custom_parameters["location"],
+                    velocity = custom_parameters["velocity"],
+                    acceleration = custom_parameters["acceleration"],
+                    diffusion_parameter = custom_parameters["diffusion_parameter"],
+                    diffusion_quantity = custom_parameters["diffusion_quantity"],
+                    weight = custom_parameters["weight"],
+                    fertility = custom_parameters["fertility"],
+                    mortality = custom_parameters["mortality"]
                 )
             else:
                 return None
-        else:
-            raise Exception("Particle is dead!")
 
     def survive(self, dtime: float):
         if self.alive:
