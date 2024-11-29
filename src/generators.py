@@ -14,6 +14,7 @@ class Particle:
     velocity: Optional[np.ndarray] = None
     acceleration: Optional[np.ndarray] = None
     diffusion_parameter: Union[float, np.ndarray] = 1.0
+    diffusion_quantity: str = "location"
     weight: float = 1.0
     fertility: float = 0.0
     mortality: float = 0.0
@@ -44,9 +45,14 @@ class Particle:
 
     def move(self, dtime: float):
         if self.alive:
+            if self.diffusion_quantity == "location":
+                self.location = self.location + np.random.normal(0.0, np.sqrt(self.diffusion_parameter * dtime))
+            elif self.diffusion_quantity == "velocity":
+                self.velocity = self.velocity + np.random.normal(0.0, np.sqrt(self.diffusion_parameter * dtime))
+            elif self.diffusion_quantity == "acceleration":
+                self.acceleration = self.acceleration + np.random.normal(0.0, np.sqrt(self.diffusion_parameter * dtime))
             self.velocity = self.velocity + dtime * self.acceleration
             self.location = self.location + dtime * self.velocity
-            self.location = self.location + np.random.normal(0.0, np.sqrt(self.diffusion_parameter * dtime))
         else:
             raise Exception("Particle is dead!")
 
@@ -58,6 +64,7 @@ class Particle:
                     velocity = self.velocity,
                     acceleration = self.acceleration,
                     diffusion_parameter = self.diffusion_parameter,
+                    diffusion_quantity = self.diffusion_quantity,
                     weight = self.weight,
                     fertility = self.fertility,
                     mortality = self.mortality
